@@ -1,4 +1,4 @@
-# context-protocol
+# Context Protocol
 
 An open protocol for data passing between components.
 
@@ -32,7 +32,16 @@ The Context API does not intend to cover all cases and forms of Dependency Injec
 
 **Context API is not a state management alternative**
 
-State management libraries often need to perform similar behaviors to the problems that Context API helps to solve. An element deep in the DOM tree made need access to some state, and may need to respond to that state being changed. While state management could be built using the Context API, it is not a primary goal of Context API to solve this problem.
+State management libraries often need to perform similar behaviors to the problems that Context API helps to solve. An element deep in the DOM tree made need access to some state, and may need to respond to that state being changed. While state management could be built using the Context API, it is not a primary goal of Context API to solve this problem. It is however most appropriate for state management libraries to use Context API to resolve state stores and other associated dependencies from deep within the DOM hierarchy, e.g. a component could request a Redux state store via Context.
+
+# Overview
+
+At a high level, the Context API is an event based protocol that components can use to retrieve data from any location in the DOM:
+
+- A component requiring some data fires a `request-context` event.
+- The event carries a `name` that denotes the data requested, and a `callback` which will receive the data.
+- Providers can attach event listeners for `request-context` events to handle them and provide the requested data.
+- Once a provider satisfies a request it calls `stopPropagation()` on the event.
 
 # Details
 
@@ -63,7 +72,7 @@ A full typescript definition for this event and its associated types can be foun
 
 ## Context Providers
 
-A context provider will satisfy a `request-context` event, passing the `callback` the requested data whenever the data changes. A provider will attach an event listener to the DOM tree to catch the event, and if it will be able to satisfy the request will call `stopPropagation` on the event.
+A context provider will satisfy a `request-context` event, passing the `callback` the requested data whenever the data changes. A provider will attach an event listener to the DOM tree to catch the event, and if it will be able to satisfy the request _MUST_ call `stopPropagation` on the event.
 
 If the provider has data available to satisfy the request then it should immediately invoke the `callback` passing the data. If the event does NOT have a truthy `once` property, then the provider can assume that the `callback` can be invokved multiple times, and may retain a reference to the callback to invoke as the data changes. If this is the case the provider should pass the second `dispose` parameter to the callback when invoking it in order to allow the requester to disconnect itself from the providers notifications.
 
@@ -71,7 +80,7 @@ A provider does not necessarily have to be a Custom Element, but this may be a c
 
 ## Usage
 
-An element which wishes to receive some context and participate in the Context API should emit an event with the context-request type. This library includes an implementation of the ContextEvent class which implements the above interface and can be used in the following way:
+An element which wishes to receive some context and participate in the Context API should emit an event with the `request-context` type. It is suggested that an implementation of the `RequestContextEvent` would be used something like this:
 
 ```js
 this.dispatchEvent(
@@ -142,7 +151,9 @@ class SimpleElement extends HTMLElement {
 
 ## Could we use Promises instead of callbacks?
 
-Many have commented that Promises could be used instead of callback functions. The major drawback of promises is that they do not allow multiple-resolution. Therefore we would not be able to handle cases where a requested value changes over time. This is capability that we see in the React Context API and believe is valuable for a variety of use cases.
+Many have commented that Promises could be used instead of callback functions. One major drawback of promises is that they cannot be resolved synchronously which would complicate usage of the Context API for simple use-cases.
+
+Another issue with promises is that they do not allow multiple-resolution. Therefore we would not be able to handle cases where a requested value changes over time. This is capability that we see in the React Context API and believe is valuable for a variety of use cases.
 
 While we could restrict this API to only support a single resolution of a requested value, and then use observable mechanisms on that value to achieve data update behaviors, it is believe this will complicate simple use-cases unnecessarily.
 
@@ -152,7 +163,7 @@ In React Context API they provide a function `createContext` which creates a con
 
 For web components this creates a centralization issue. If all components want is a logger context, where would the logger context object be defined? Who owns that module? Will all consumers agree to depend upon it?
 
-Thus far we have determined that a 'looser' approach will serve us better and avoid centralization concerns.
+Thus far we have determined that a 'looser' approach will serve us better and avoid centralization concerns. But this is still an open question and deserves further debate.
 
 ## How to handle name conflicts?
 
