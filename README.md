@@ -10,8 +10,8 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 
 ## Proposals
 
-| Proposal  | Author           | Status |
-| --------- | ---------------- | ------ |
-| [Context] | Benjamin Delarre | PR     |
+| Proposal  | Author           | Status   |
+| --------- | ---------------- | -------- |
+| [Context] | Benjamin Delarre | Proposal |
 
 [context]: https://github.com/webcomponents/community-protocols/pull/2

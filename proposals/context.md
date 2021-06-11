@@ -4,9 +4,9 @@ An open protocol for data passing between components.
 
 Author: Benjamin Delarre
 
-Document status: Draft
+Document status: Proposal
 
-Last update: 2021-4-27
+Last update: 2021-6-11
 
 # Background
 
