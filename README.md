@@ -12,3 +12,23 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 | Proposal        | Author         | Status |
 |-----------------|----------------|--------|
 | TK | TK | TK     |
+
+## Status
+
+Community Protocols will go through a number of phases during which they can gather further community insight and approval before becoming "Accepted". These phases are as follows:
+
+- *Proposal*
+  "Proposal" status applies to just about anything that community members are interested in putting some thought into. While an issue submitted to this repo can help generate initial ideas on the protocol or space of interest and clarify the information needed to kick off a more fruitful conversation, a PR will serve to make known that you are interested in support to drive the protocol in question forward. Having an initial explainer included in this PR, while adding the protocol to the "Proposals" table shown above, will prepare the community to both communicate about and contribute to the development of the protocol asynchronously.
+
+- *Draft*
+  A protocol generally agreed to be an interesting area of investigation is given "Draft" status. At this point, the conversation will pivot away from proving the need for a protocol and towards proving a specific pattern by which the protocol can be achieved across the web components community. Developmental work in this area can be addressed in PRs or via group meetings of the [w3c's Web Components Community Group](https://github.com/w3c/webcomponents-cg) as needed.
+
+- *Candidate*
+  Once a protocol has received proper incubation and a pattern for applying it has solidified it will be given "Candidate" status. This status outlines that it will soon be accepted. Community members should use this opportunity to outline any final concerns or adjustments they'd like to see in the protocol before adoption. By this point, the "work" should mostly be done and the focus will be polish and presentation.
+
+- *Accepted*
+  An "Accepted" protocol is one that is ready to put into action across the community. With clear APIs, types, usage patterns included they are ready to serve the greater purpose of supporting interoperability between web components built from various contexts.
+
+### Status Graduation
+
+Community protocols are "generally agreed upon patterns" and not "browser specs", so they will always be a choice you make more so than rules a component developer or library author has to follow. In this way, graduation of a protocol from one status to the next will primarily happen in the absence of hard "nay"s. Your active participation in issues, PRs, or [w3c's Web Components Community Group](https://github.com/w3c/webcomponents-cg) meetings regarding specific protocols will be the best way to advocate for a protocol making its way through this process. 
