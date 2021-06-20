@@ -118,13 +118,13 @@ this.addEventListener('pending-task', async (e) => {
 
 ## Default actions
 
-Some UI controls are able to show their own pending task indicators. One example is a form submit button with an embedded spinner. Such a controller may not want to show the loading indicator if a component above it in the tree is also. This can be accomplished with event default actions.
+Some UI controls are able to show their own pending task indicators. One example is a form submit button with an embedded spinner. Such a controller may not want to show the loading indicator if a component above it in the tree is also showing one. This can be accomplished with event default actions.
 
-Listeners cal call `e.preventDefault()` on the event:
+Listeners can call `e.preventDefault()` on the event:
 
 ```ts
 this.addEventListener('pending-task', async (e) => {
-  e.stopPropagation();
+  e.preventDefault();
   // show loading indicator
   await e.complete;
   // hide loading indicator
