@@ -146,7 +146,7 @@ There are different types of async work. Whether this proposal should attempt to
 
 The argument against is that we simply do not yet know what categories there should be and how to definitively guide authors towards choosing the right type. It's also just additional complexity for component authors.
 
-An argument for is that there are some types of async work that we may not want to display UI affordances (like spinners) for. Async rendering used in order to yield to the browser's task queue for input hanlding and layout/paint for instance, should probably not trigger a progress indicator. Yet, code that measures style or layout may need to wait for rendering to complete, and so could utilize pending-state for that.
+An argument for is that there are some types of async work that we may not want to display UI affordances (like spinners) for. Async rendering used in order to yield to the browser's task queue for input hanlding and layout/paint for instance, should probably not trigger a progress indicator. Yet, code that measures style or layout may need to wait for rendering to complete, and so could potentially utilize pending-task for that.
 
 How can we allow UI affordances like spinners, but not to frequently create them during async rendering?
 
