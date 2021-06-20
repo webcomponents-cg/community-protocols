@@ -70,13 +70,19 @@ class DoWorkElement extends HTMLElement {
 
 // Inside a container component:
 class IndicateWorkElement extends HTMLElement {
+  #pendingTaskCount = 0;
+
   constructor() {
     super();
     this.addEventListener('pending-task', async (e) => {
       e.stopPropagation();
-      this.showSpinner();
+      if (++this.#pendingTaskCount === 1) {
+        this.showSpinner();
+      }
       await e.complete;
-      this.hideSpinner();
+      if (--this.#pendingTaskCount === 0) {
+        this.hideSpinner();
+      }
     });
   }
 }
