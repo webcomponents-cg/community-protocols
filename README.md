@@ -13,7 +13,7 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 |-----------------|----------------|--------|
 | [Pending Task]  | Justin Fagnani | Draft  |
 
-[Pending Task]: [https://github.com/webcomponents/community-protocols/pull/1]
+[Pending Task]: https://github.com/webcomponents/community-protocols/pull/1
 
 ## Status
 
