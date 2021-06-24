@@ -9,11 +9,13 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 
 ## Proposals
 
-| Proposal        | Author         | Status |
-|-----------------|----------------|--------|
-| [Pending Task]  | Justin Fagnani | Draft  |
+| Proposal        | Author         | Status    |
+|-----------------|----------------|-----------|
+| [Pending Task]  | Justin Fagnani | Draft     |
+| [Pending Task]  | Justin Fagnani | Proposal  |
 
 [Pending Task]: https://github.com/webcomponents/community-protocols/pull/1
+[Defer Hydration]: https://github.com/webcomponents/community-protocols/pull/15
 
 ## Status
 
