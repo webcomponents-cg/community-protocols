@@ -11,7 +11,9 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 
 | Proposal        | Author         | Status |
 |-----------------|----------------|--------|
-| TK | TK | TK     |
+| [Pending Task]  | Justin Fagnani | Draft  |
+
+[Pending Task]: [https://github.com/webcomponents/community-protocols/pull/1]
 
 ## Status
 
