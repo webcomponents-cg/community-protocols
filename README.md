@@ -10,10 +10,10 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 
 ## Proposals
 
-| Proposal       | Author           | Status   |
-|----------------|------------------|----------|
-| [Context]      | Benjamin Delarre | Proposal |
-| [Pending Task] | Justin Fagnani   | Draft    |
+| Proposal       | Author           | Status |
+|----------------|------------------|--------|
+| [Context]      | Benjamin Delarre | Draft  |
+| [Pending Task] | Justin Fagnani   | Draft  |
 
 [Context]: https://github.com/webcomponents/community-protocols/pull/2
 [Pending Task]: https://github.com/webcomponents/community-protocols/pull/1
@@ -36,4 +36,4 @@ Community Protocols will go through a number of phases during which they can gat
 
 ### Status Graduation
 
-Community protocols are "generally agreed upon patterns" and not "browser specs", so they will always be a choice you make more so than rules a component developer or library author has to follow. In this way, graduation of a protocol from one status to the next will primarily happen in the absence of hard "nay"s. Your active participation in issues, PRs, or [w3c's Web Components Community Group](https://github.com/w3c/webcomponents-cg) meetings regarding specific protocols will be the best way to advocate for a protocol making its way through this process. 
+Community protocols are "generally agreed upon patterns" and not "browser specs", so they will always be a choice you make more so than rules a component developer or library author has to follow. In this way, graduation of a protocol from one status to the next will primarily happen in the absence of hard "nay"s. Your active participation in issues, PRs, or [w3c's Web Components Community Group](https://github.com/w3c/webcomponents-cg) meetings regarding specific protocols will be the best way to advocate for a protocol making its way through this process.
