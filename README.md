@@ -1,18 +1,21 @@
 # community-protocols
+
 As the diversity of custom elements grows wider and deeper, so do the benefits of those elements being able to communicate with each other. Making this possible via reusably well-known protocols can enable components not just from X vendor to communicate with themselves, but also to interoperate with components from Y vendor and Z vendor. This project looks to define community protocols for cross-component coordination that reduce the overhead required to make that possible.
 
 Think of things like a context API, async work (Suspense-like), SSR-interop, incremental hydration, etc., many of these capabilities get locked into framework APIs that increase the barriers to interoperability. With a community defined protocol, these features and more become attainable and portable across the web components ecosystem.
 
 ## Get involved
-Check out the [Issues](https://github.com/webcomponents/community-protocols/issues) and [PRs](https://github.com/webcomponents/community-protocols/pulls) currently open on this repo to join in on conversations already inflight regarding a number of exciting areas. If you have ideas on a protocol you like raised to the community open a new [issues](https://github.com/webcomponents/community-protocols/issues/new) so that authors and consumers of libraries and components from across the community that likely have (or wanted to have) implemented features in that area can join in with their use cases as well. Once the rough edges have been hammered out, submit a PR with specs of the protocol and append it to the "Protocols" list below so it can be formalized and put into use across the community.
 
+Check out the [Issues](https://github.com/webcomponents/community-protocols/issues) and [PRs](https://github.com/webcomponents/community-protocols/pulls) currently open on this repo to join in on conversations already inflight regarding a number of exciting areas. If you have ideas on a protocol you like raised to the community open a new [issues](https://github.com/webcomponents/community-protocols/issues/new) so that authors and consumers of libraries and components from across the community that likely have (or wanted to have) implemented features in that area can join in with their use cases as well. Once the rough edges have been hammered out, submit a PR with specs of the protocol and append it to the "Protocols" list below so it can be formalized and put into use across the community.
 
 ## Proposals
 
-| Proposal        | Author         | Status |
-|-----------------|----------------|--------|
-| [Pending Task]  | Justin Fagnani | Draft  |
+| Proposal       | Author           | Status |
+|----------------|------------------|--------|
+| [Context]      | Benjamin Delarre | Draft  |
+| [Pending Task] | Justin Fagnani   | Draft  |
 
+[Context]: https://github.com/webcomponents/community-protocols/pull/2
 [Pending Task]: https://github.com/webcomponents/community-protocols/pull/1
 
 ## Status
@@ -33,4 +36,4 @@ Community Protocols will go through a number of phases during which they can gat
 
 ### Status Graduation
 
-Community protocols are "generally agreed upon patterns" and not "browser specs", so they will always be a choice you make more so than rules a component developer or library author has to follow. In this way, graduation of a protocol from one status to the next will primarily happen in the absence of hard "nay"s. Your active participation in issues, PRs, or [w3c's Web Components Community Group](https://github.com/w3c/webcomponents-cg) meetings regarding specific protocols will be the best way to advocate for a protocol making its way through this process. 
+Community protocols are "generally agreed upon patterns" and not "browser specs", so they will always be a choice you make more so than rules a component developer or library author has to follow. In this way, graduation of a protocol from one status to the next will primarily happen in the absence of hard "nay"s. Your active participation in issues, PRs, or [w3c's Web Components Community Group](https://github.com/w3c/webcomponents-cg) meetings regarding specific protocols will be the best way to advocate for a protocol making its way through this process.
