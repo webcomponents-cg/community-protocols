@@ -15,8 +15,8 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 | [Context]      | Benjamin Delarre | Draft  |
 | [Pending Task] | Justin Fagnani   | Draft  |
 
-[Context]: https://github.com/webcomponents/community-protocols/pull/2
-[Pending Task]: https://github.com/webcomponents/community-protocols/pull/1
+[Context]: https://github.com/webcomponents/community-protocols/blob/main/proposals/context.md
+[Pending Task]: https://github.com/webcomponents/community-protocols/blob/main/proposals/pending-task.md
 
 ## Status
 
