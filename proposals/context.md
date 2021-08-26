@@ -12,14 +12,14 @@ Last update: 2021-8-26
 
 There are a number of scenarios where a web component might require data that is provided from outside itself. While components can specify properties and attributes to receive that data imperatively or declaratively, it is often the case that the data may be owned somewhere further up the DOM tree.
 
-One approach to passing this data down to components is commonly referred to as 'prop drilling,' whereby components pass properties all the way down through the hierarchy, passing from component to component until it is consumed at its destination. This is generally considered undesirable as it often requires intermediate components in the tree to have knowledge of the data necessary in its descendents.
+One approach to passing this data down to components is commonly referred to as *prop drilling*, whereby components pass properties all the way down through the hierarchy, passing from component to component until it is consumed at its destination. This is generally considered undesirable as it often requires intermediate components in the tree to have knowledge of the data necessary in its descendents.
 
 Frameworks and libraries often provide mechanisms for this, these can range from the simple Context implementation available in React, to more complex Dependency Injection frameworks. Web components need a similar protocol in order to solve this problem.
 
 # Goals
 
 - Allow elements in the DOM to retrieve data based on their contextual position in the DOM
-- Alleviate the problem of 'prop drilling'
+- Alleviate the problem of *prop drilling*
 - Simple API that is easily implemented in any framework / library
 - Synchronous protocol, while supporting asynchronous patterns
 - Support single or multiple delivery of context values
@@ -28,7 +28,7 @@ Frameworks and libraries often provide mechanisms for this, these can range from
 
 **Context API !== Dependency Injection Framework**
 
-The Context API does not intend to cover all cases and forms of Dependency Injection. It does not specify constructor, factory or property injection patterns. Its only goal is to formalize the pattern of sharing data across the hierarchy in the DOM, specifically avoiding 'prop drilling' type scenarios. Dependency Injection patterns could be implemented using this protocol, but this is not the goal and should remain explicitly outside the scope of Context API for simplicity.
+The Context API does not intend to cover all cases and forms of Dependency Injection. It does not specify constructor, factory or property injection patterns. Its only goal is to formalize the pattern of sharing data across the hierarchy in the DOM, specifically avoiding *prop drilling* type scenarios. Dependency Injection patterns could be implemented using this protocol, but this is not the goal and should remain explicitly outside the scope of Context API for simplicity.
 
 **Context API is not a state management alternative**
 
