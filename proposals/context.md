@@ -6,20 +6,20 @@ Author: Benjamin Delarre
 
 Document status: Draft
 
-Last update: 2021-6-25
+Last update: 2021-8-26
 
 # Background
 
 There are a number of scenarios where a web component might require data that is provided from outside itself. While components can specify properties and attributes to receive that data imperatively or declaratively, it is often the case that the data may be owned somewhere further up the DOM tree.
 
-One approach to passing this data down to components is commonly referred to as 'prop drilling', whereby components pass properties all the way down through the hierarchy, passing from component to component until it is consumed at its destination. This is generally considered undesirable as it often requires intermediate components in the tree to have knowledge of the data necessary in its descendents.
+One approach to passing this data down to components is commonly referred to as *prop drilling*, whereby components pass properties all the way down through the hierarchy, passing from component to component until it is consumed at its destination. This is generally considered undesirable as it often requires intermediate components in the tree to have knowledge of the data necessary in its descendents.
 
 Frameworks and libraries often provide mechanisms for this, these can range from the simple Context implementation available in React, to more complex Dependency Injection frameworks. Web components need a similar protocol in order to solve this problem.
 
 # Goals
 
 - Allow elements in the DOM to retrieve data based on their contextual position in the DOM
-- Alleviate the problem of 'prop drilling'
+- Alleviate the problem of *prop drilling*
 - Simple API that is easily implemented in any framework / library
 - Synchronous protocol, while supporting asynchronous patterns
 - Support single or multiple delivery of context values
@@ -28,15 +28,15 @@ Frameworks and libraries often provide mechanisms for this, these can range from
 
 **Context API !== Dependency Injection Framework**
 
-The Context API does not intend to cover all cases and forms of Dependency Injection. It does not specify constructor, factory or property injection patterns. Its only goal is to formalize the pattern of sharing data across the hierarchy in the DOM, specifically avoiding 'prop drilling' type scenarios. Dependency Injection patterns could be implemented using this protocol, but this is not the goal and should remain explicitly outside the scope of Context API for simplicity.
+The Context API does not intend to cover all cases and forms of Dependency Injection. It does not specify constructor, factory or property injection patterns. Its only goal is to formalize the pattern of sharing data across the hierarchy in the DOM, specifically avoiding *prop drilling* type scenarios. Dependency Injection patterns could be implemented using this protocol, but this is not the goal and should remain explicitly outside the scope of Context API for simplicity.
 
 **Context API is not a state management alternative**
 
-State management libraries often need to perform similar behaviors to the problems that Context API helps to solve. An element deep in the DOM tree made need access to some state, and may need to respond to that state being changed. While state management could be built using the Context API, it is not a primary goal of Context API to solve this problem. It is however most appropriate for state management libraries to use Context API to resolve state stores and other associated dependencies from deep within the DOM hierarchy, e.g. a component could request a Redux state store via Context.
+State management libraries often need to perform similar behaviors to the problems that the Context API helps to solve. An element deep in the DOM tree may need access to some state, and may need to respond to that state being changed. While state management could be built using the Context API, it is not a primary goal of the Context API to solve this problem. It is, however, appropriate for state management libraries to use the Context API to resolve state stores and other associated dependencies from deep within the DOM hierarchy; e.g. a component could request a Redux state store via Context.
 
 # Overview
 
-At a high level, the Context API is an event based protocol that components can use to retrieve data from any location in the DOM:
+At a high level, the Context API is an event-based protocol that components can use to retrieve data from any location in the DOM:
 
 - A component requiring some data fires a `context-request` event.
 - The event carries a `context` value that denotes the data requested, and a `callback` which will receive the data.
@@ -104,7 +104,7 @@ export function createContext<T>(name: string, initialValue?: T): Context<T> {
 
 A context provider will satisfy a `context-request` event, passing the `callback` the requested data whenever the data changes. A provider will attach an event listener to the DOM tree to catch the event, and if it will be able to satisfy the request _MUST_ call `stopPropagation` on the event.
 
-If the provider has data available to satisfy the request then it should immediately invoke the `callback` passing the data. If the event has a truthy `multiple` property, then the provider can assume that the `callback` can be invokved multiple times, and may retain a reference to the callback to invoke as the data changes. If this is the case the provider should pass the second `dispose` parameter to the callback when invoking it in order to allow the requester to disconnect itself from the providers notifications.
+If the provider has data available to satisfy the request then it should immediately invoke the `callback` passing the data. If the event has a truthy `multiple` property, then the provider can assume that the `callback` can be invoked multiple times, and may retain a reference to the callback to invoke as the data changes. If this is the case the provider should pass the second `dispose` parameter to the callback when invoking it in order to allow the requester to disconnect itself from the providers notifications.
 
 A provider does not necessarily have to be a Custom Element, but this may be a convenient mechanism.
 
