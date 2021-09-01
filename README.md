@@ -29,10 +29,12 @@ Community Protocols will go through a number of phases during which they can gat
   A protocol generally agreed to be an interesting area of investigation is given "Draft" status. At this point, the conversation will pivot away from proving the need for a protocol and towards proving a specific pattern by which the protocol can be achieved across the web components community. Developmental work in this area can be addressed in PRs or via group meetings of the [w3c's Web Components Community Group](https://github.com/w3c/webcomponents-cg) as needed.
 
 - *Candidate*
-  Once a protocol has received proper incubation and a pattern for applying it has solidified it will be given "Candidate" status. This status outlines that it will soon be accepted. Community members should use this opportunity to outline any final concerns or adjustments they'd like to see in the protocol before adoption. By this point, the "work" should mostly be done and the focus will be polish and presentation.
+  Once a protocol has received proper incubation and a pattern for applying it has solidified it will be given "Candidate" status. This status outlines that it will soon be accepted. Community members should use this opportunity to outline any final concerns or adjustments they'd like to see in the protocol before adoption. By this point, the work should mostly be done and the focus will be polish, presentation, and implementation.
 
 - *Accepted*
   An "Accepted" protocol is one that is ready to put into action across the community. With clear APIs, types, usage patterns included they are ready to serve the greater purpose of supporting interoperability between web components built from various contexts.
+
+  To move to "Accepted" a proposal needs __2__ implementations.
 
 ### Status Graduation
 
