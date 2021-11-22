@@ -199,7 +199,7 @@ The current API as proposed does not allow a requestor to 'approve' that a provi
 ```js
 this.dispatchEvent(
   new ContextEvent(loggerContext, (candidate) => {
-    if (typeof candidate.log === 'function' && typeof candidate.info === 'function) {
+    if (typeof candidate.log === 'function' && typeof candidate.info === 'function') {
       // we can accept this candidate so return the callback to the provider
       return (logger, dispose) => {
         this.logger = logger;
