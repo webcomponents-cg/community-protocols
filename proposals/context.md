@@ -106,6 +106,15 @@ A context provider will satisfy a `context-request` event, passing the `callback
 
 If the provider has data available to satisfy the request then it should immediately invoke the `callback` passing the data. If the event has a truthy `multiple` property, then the provider can assume that the `callback` can be invoked multiple times, and may retain a reference to the callback to invoke as the data changes. If this is the case the provider should pass the second `dispose` parameter to the callback when invoking it in order to allow the requester to disconnect itself from the providers notifications.
 
+The provider should call `stopPropagation` before invoking the callback, to ensure that an error thrown by the callback does not prevent propagation from being stopped:
+
+```js
+this.addEventListener('context-request', event => {
+  event.stopPropagation();
+  event.callback('some data'); // If the callback throws, propagation is already stopped
+});
+```
+
 A provider does not necessarily have to be a Custom Element, but this may be a convenient mechanism.
 
 ## Usage
