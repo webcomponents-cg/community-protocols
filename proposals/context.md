@@ -172,7 +172,7 @@ class SimpleElement extends HTMLElement {
         (value, dispose) => {
           // protect against changing providers
           if (dispose && dispose !== this.loggerDisposer) {
-            this.dispose();
+            this.loggerDisposer();
           }
           this.logger = value;
           this.loggerDisposer = dispose;
