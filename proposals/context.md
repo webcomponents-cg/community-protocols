@@ -68,36 +68,52 @@ interface ContextEvent<T extends Context<unknown>> extends Event {
 }
 ```
 
-A full typescript definition for this event and its associated types can be found in the [Definitions](#definitions) section at the end of this document.
+## Context objects
 
-## The `createContext` function
+`ContextEvent`s carry a `context` value that is used to identify specific contexts. This value may sometimes be referred to as the "context key", and can be of any type.
 
-Implementations should provide a `createContext` function which is used to create a well known value to identify a specific Context. These well known values could be published in lightweight NPM packages to facilitate community compatibility.
+### Context equality
 
-It is suggested the `createContext` implementation take a string identifier to facilitate debugging, and an optional initial value which consumers could use if no Context is provided. The function should return a `Context` object with the following type definition:
+Matching contexts between a provider and consumer is done with strict equality (`===`). This means that a context can be made guaranteed unique by using a key value that's unque under strict equality, like a unique Symbol (not using `Symbol.for()`) or an object. A context can be intentionally made to match other contexts by using a key that's not unique under strict equality like a string or `Symboo.for()`.
+
+### Context types
+
+In TypeScript it's possible to cast values to an interface that carries additional type information. This is useful for contexts to convey the type of the value that the context provides.
+
+To be interoperable, implementations should cast context keys to a type with the `__context__` key:
 
 ```ts
-export type Context<T> = {
-  name: string;
-  initialValue?: T;
-};
+export type Context<KeyType, ValueType> = KeyType & {__context__: ValueType};
 ```
 
-It is proposed that the `community-protocols` repository will publish a package that contains a default `createContext` implementation. An example implementation is as follows:
+Then values can be cast to this to create a typed context key:
 
 ```ts
-export type UnknownContext = Context<unknown>;
+export const myContext = 'my-context' as Context<string, number>;
+```
 
-export type ContextType<T extends UnknownContext> = T extends Context<infer Y>
-  ? Y
-  : never;
+The type of a Context can then be extracted with a utility type:
 
-export function createContext<T>(name: string, initialValue?: T): Context<T> {
-  return {
-    name,
-    initialValue,
-  };
-}
+```ts
+export type ContextType<Key extends Context<unknown, unknown>> =
+  Key extends Context<unknown, infer ValueType> ? ValueType : never;
+```
+
+Usage:
+```ts
+// MyContextType = number
+type MyContextType = ContextType<typeof myContext>;
+```
+
+It is recommended that TypeScript-based implementations provide both `Context` and `ContextType` types.
+
+### `createContext` functions
+
+It is recommended that TypeScript implementations provide a `createContext()` function which is used to create a `Context`. This function can just cast to a `Context`:
+
+```ts
+export const createContext = <ValueType>(key: unknown) =>
+    key as Context<typeof key, ValueType>;
 ```
 
 ## Context Providers
