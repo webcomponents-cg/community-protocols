@@ -32,7 +32,9 @@ The Context API does not intend to cover all cases and forms of Dependency Injec
 
 **Context API is not a state management alternative**
 
-State management libraries often need to perform similar behaviors to the problems that the Context API helps to solve. An element deep in the DOM tree may need access to some state, and may need to respond to that state being changed. While state management could be built using the Context API, it is not a primary goal of the Context API to solve this problem. It is, however, appropriate for state management libraries to use the Context API to resolve state stores and other associated dependencies from deep within the DOM hierarchy; e.g. a component could request a Redux state store via Context.
+State management libraries often need to solve some similar problems that the Context API helps to solve. An element deep in the DOM tree may need access to some state, and may need to respond to that state being changed.
+
+While state management could be built using the Context API, it is not a primary goal of the Context API to solve this problem. It is, however, appropriate for state management libraries to use the Context API to resolve state stores and other associated dependencies from deep within the DOM hierarchy; e.g. a component could request a Redux state store via Context.
 
 # Overview
 
@@ -49,7 +51,7 @@ At a high level, the Context API is an event-based protocol that components can 
 
 Components which wish to receive some data from their ancestors should initiate the request by firing a composed, bubbling, `context-request` Event, with a `callback` property.
 
-Typescript interface:
+TypeScript interface:
 
 ```typescript
 interface ContextEvent<T extends Context<unknown>> extends Event {
@@ -67,6 +69,8 @@ interface ContextEvent<T extends Context<unknown>> extends Event {
   readonly callback: ContextCallback<T>;
 }
 ```
+
+A full TypeScript definition for this event and its associated types can be found in the [Definitions](#definitions) section at the end of this document.
 
 ## Context objects
 
@@ -219,7 +223,7 @@ While we could restrict this API to only support a single resolution of a reques
 
 ## Should requesters get to 'accept' providers?
 
-The current API as proposed does not allow a requestor to 'approve' that a provider is going to give it the right object. We have some capability to enforce this in Typescript, but we could provide a slightly different API that would allow the requesting component to check the value it will receive:
+The current API as proposed does not allow a requestor to 'approve' that a provider is going to give it the right object. We have some capability to enforce this in TypeScript, but we could provide a slightly different API that would allow the requesting component to check the value it will receive:
 
 ```js
 this.dispatchEvent(
@@ -257,11 +261,11 @@ const dispose = provider.provide(this, (logger) => {
 dispose(); // don't need updates anymore
 ```
 
-These alternatives do provide more capability, but its an open question as to whether or not this complexity is warranted or desired. It also opens up a larger question about what would the candidate value be? Would it have to be an object of the requested type, could it be some other protocol to determine uniformity between the requested data and the actual data? This begins to seem more complex than we really need here for unnecessary type safety overhead. It is suggested if consumers want type safety then they should use Typescript to achieve this.
+These alternatives do provide more capability, but its an open question as to whether or not this complexity is warranted or desired. It also opens up a larger question about what would the candidate value be? Would it have to be an object of the requested type, could it be some other protocol to determine uniformity between the requested data and the actual data? This begins to seem more complex than we really need here for unnecessary type safety overhead. It is suggested if consumers want type safety then they should use TypeScript to achieve this.
 
 # Definitions
 
-Below are some typescript definitions for the common parts of the proposed protocol:
+Below are some TypeScript definitions for the common parts of the proposed protocol:
 
 ```typescript
 /**
