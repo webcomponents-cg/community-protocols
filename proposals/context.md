@@ -140,7 +140,7 @@ this.dispatchEvent(
 
 If a provider listening for this event can provide the requested context it will invoke the callback passed in the payload of the event. The element can then do whatever it wishes with this value.
 
-It may also be the case that a provider can retain a reference to this callback, and can then invoke the callback multiple times. In this case providers should pass a unsubscribe function as a second argument to the callback to allow consumers to inform the provider that it should no longer update the element, and should dispose of the callback.
+It may also be the case that a provider can retain a reference to this callback, and can then invoke the callback multiple times. In this case providers should pass an unsubscribe function as a second argument to the callback to allow consumers to inform the provider that it should no longer update the element, and should dispose of the callback.
 
 An element may also provide a `subscribe` boolean on the event detail to indicate that it is interested in receiving updates to the value.
 
@@ -300,7 +300,7 @@ export type ContextCallback<ValueType> = (
  * satisfy the request, calling the `callback` with the requested value if so.
  *
  * If the requested context event contains a truthy `subscribe` value, then a provider can call the callback
- * multiple times if the value is changed, if this is the case the provider should pass a `unsubscribe`
+ * multiple times if the value is changed, if this is the case the provider should pass an `unsubscribe`
  * function to the callback which requesters can invoke to indicate they no longer wish to receive these updates.
  */
 export class ContextEvent<T extends UnknownContext> extends Event {
