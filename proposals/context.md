@@ -62,7 +62,7 @@ interface ContextEvent<T extends Context<unknown>> extends Event {
   /**
    * A boolean indicating if the context should be provided more than once.
    */
-  readonly multiple?: boolean;
+  readonly subscribe?: boolean;
   /**
    * A callback which a provider of this named callback should invoke.
    */
@@ -124,14 +124,17 @@ export const createContext = <ValueType>(key: unknown) =>
 
 A context provider will satisfy a `context-request` event, passing the `callback` the requested data whenever the data changes. A provider will attach an event listener to the DOM tree to catch the event, and if it will be able to satisfy the request _MUST_ call `stopPropagation` on the event.
 
-If the provider has data available to satisfy the request then it should immediately invoke the `callback` passing the data. If the event has a truthy `multiple` property, then the provider can assume that the `callback` can be invoked multiple times, and may retain a reference to the callback to invoke as the data changes. If this is the case the provider should pass the second `dispose` parameter to the callback when invoking it in order to allow the requester to disconnect itself from the providers notifications.
+If the provider has data available to satisfy the request then it should immediately invoke the `callback` passing the data. If the event has a truthy `subscribe` property, then the provider can assume that the `callback` can be invoked multiple times, and may retain a reference to the callback to invoke as the data changes. If this is the case the provider should pass the second `unsubscribe` parameter to the callback when invoking it in order to allow the requester to disconnect itself from the providers notifications.
 
-The provider should call `stopPropagation` before invoking the callback, to ensure that an error thrown by the callback does not prevent propagation from being stopped:
+The provider _MUST NOT_ retain a reference to the `callback` nor pass an `unsubscribe` callback if the `context-request` event's `subscribe` property is not truthy. Doing so may cause a memory leak as the consumer may not ever call the `unsibscribe` callback.
+
+The provider _SHOULD_ call `stopPropagation` before invoking the callback, or cal the callback in a try/catch block, to ensure that an error thrown by the callback does not prevent propagation from being stopped:
 
 ```js
 this.addEventListener('context-request', event => {
   event.stopPropagation();
-  event.callback('some data'); // If the callback throws, propagation is already stopped
+  // If the callback throws, propagation is already stopped
+  event.callback('some data');
 });
 ```
 
@@ -146,40 +149,41 @@ An element which wishes to receive some context and participate in the Context A
 const coolThingContext = createContext('cool-thing');
 
 this.dispatchEvent(
-    new ContextEvent(
-        coolThingContext, // the context we want to retrieve
-        callback: (coolThing) => {
-            this.myCoolThing = coolThing; // do something with value
-        }
-    )
+  new ContextEvent(
+    coolThingContext, // the context we want to retrieve
+    (coolThing) => {
+      this.myCoolThing = coolThing; // do something with value
+    }
+  )
 );
 ```
 
 If a provider listening for this event can provide the requested context it will invoke the callback passed in the payload of the event. The element can then do whatever it wishes with this value.
 
-It may also be the case that a provider can retain a reference to this callback, and can then invoke the callback multiple times. In this case providers should pass a dispose function as a second argument to the callback to allow consumers to inform the provider that it should no longer update the element, and should dispose of the callback.
+It may also be the case that a provider can retain a reference to this callback, and can then invoke the callback multiple times. In this case providers should pass an unsubscribe function as a second argument to the callback to allow consumers to inform the provider that it should no longer update the element, and should dispose of the callback.
 
-An element may also provide a `multiple` boolean on the event detail to indicate that it is interested in receiving updates to the value.
+An element may also provide a `subscribe` boolean on the event detail to indicate that it is interested in receiving updates to the value.
 
-Consumers should be aware that given that there is a loose coupling between implementations with this protocol that they may need to implement the `callback` handling defensively. An example is provided below:
+Consumers should be aware that given that there is a loose coupling between implementations with this protocol that they may need to implement the `callback` handling defensively. An example of a defensive consumer that only wants a value once is provided below:
 
 ```js
+let providedAlready = false;
 this.dispatchEvent(
-  new ContextEvent(coolThingContext, (coolThing, dispose) => {
-    // if we were given a disposer, this provider is likely to send us updates
-    if (dispose) {
-      // so dispose immediately if we only want it once
-      dispose();
-    }
-    // guard against multiple assignment in case of bad actor providers
-    if (!this.myCoolThing) {
+  // Note, this event is not a subscribing event:
+  new ContextEvent(coolThingContext, (coolThing, unsubscribe) => {
+    // Guard against multiple callback calls in case of bad actor providers
+    if (!providedAlready) {
       this.myCoolThing = coolThing; // do something with value
     }
+    // `unsubscribe()` should be given if `subscribe` was true on the request 
+    // event. But if a bad provider passed an unsubscribe callback anyway,
+    // you could unsubscribe immediately since we only want it once.
+    unsubscribe?.();
   })
 );
 ```
 
-It is recommended that custom elements which participate in the Context API should fire their `context-request` events in their `connectedCallback` handler. Likewise in their `disconnectedCallback` they should invoke any dispose functions they have received.
+It is recommended that custom elements which participate in the Context API should fire their `context-request` events in their `connectedCallback()` method. Likewise in their `disconnectedCallback()` method they should invoke any unsubscribe callbacks they have received.
 
 A more complete example is as follows:
 
@@ -189,23 +193,22 @@ class SimpleElement extends HTMLElement {
     this.dispatchEvent(
       new ContextEvent(
         loggerContext,
-        (value, dispose) => {
-          // protect against changing providers
-          if (dispose && dispose !== this.loggerDisposer) {
-            this.loggerDisposer();
+        (value, unsubscribe) => {
+          // Call the old unsubscribe callback if the unsubscribe call has
+          // changed. This probably means we have a new provider.
+          if (unsubscribe !== this.loggerUnsubscribe) {
+            this.loggerUnsubscribe.?();
           }
           this.logger = value;
-          this.loggerDisposer = dispose;
+          this.loggerUnsubscribe = unsubscribe;
         },
         true // we want this event multiple times (if the logger changes)
       )
     );
   }
   disconnectedCallback() {
-    if (this.loggerDisposer) {
-      this.loggerDisposer();
-    }
-    this.loggerDisposer = undefined;
+    this.loggerUnsubscribe?.();
+    this.loggerUnsubscribe = undefined;
     this.logger = undefined;
   }
 }
@@ -230,7 +233,7 @@ this.dispatchEvent(
   new ContextEvent(loggerContext, (candidate) => {
     if (typeof candidate.log === 'function' && typeof candidate.info === 'function') {
       // we can accept this candidate so return the callback to the provider
-      return (logger, dispose) => {
+      return (logger, unsubscribe) => {
         this.logger = logger;
       };
     }
@@ -254,11 +257,11 @@ if (!contextRequest.providers) {
 const provider = contextRequest.providers.find((loggerProvider) => {
   // test if the provider is the type we want or the value it provides is right
 });
-const dispose = provider.provide(this, (logger) => {
+const unsubscribe = provider.provide(this, (logger) => {
   this.logger = logger;
 });
 // later...
-dispose(); // don't need updates anymore
+unsubscribe(); // don't need updates anymore
 ```
 
 These alternatives do provide more capability, but its an open question as to whether or not this complexity is warranted or desired. It also opens up a larger question about what would the candidate value be? Would it have to be an object of the requested type, could it be some other protocol to determine uniformity between the requested data and the actual data? This begins to seem more complex than we really need here for unnecessary type safety overhead. It is suggested if consumers want type safety then they should use TypeScript to achieve this.
@@ -307,7 +310,7 @@ export function createContext<T>(
  */
 export type ContextCallback<ValueType> = (
   value: ValueType,
-  dispose?: () => void
+  unsubscribe?: () => void
 ) => void;
 
 /**
@@ -316,15 +319,15 @@ export type ContextCallback<ValueType> = (
  * A provider should inspect the `context` property of the event to determine if it has a value that can
  * satisfy the request, calling the `callback` with the requested value if so.
  *
- * If the requested context event contains a truthy `multiple` value, then a provider can call the callback
- * multiple times if the value is changed, if this is the case the provider should pass a `dispose`
- * method to the callback which requesters can invoke to indicate they no longer wish to receive these updates.
+ * If the requested context event contains a truthy `subscribe` value, then a provider can call the callback
+ * multiple times if the value is changed, if this is the case the provider should pass an `unsubscribe`
+ * function to the callback which requesters can invoke to indicate they no longer wish to receive these updates.
  */
 export class ContextEvent<T extends UnknownContext> extends Event {
   public constructor(
     public readonly context: T,
     public readonly callback: ContextCallback<ContextType<T>>,
-    public readonly multiple?: boolean
+    public readonly subscribe?: boolean
   ) {
     super("context-request", { bubbles: true, composed: true });
   }
