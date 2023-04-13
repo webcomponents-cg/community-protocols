@@ -78,7 +78,7 @@ A full TypeScript definition for this event and its associated types can be foun
 
 ### Context equality
 
-Matching contexts between a provider and consumer is done with strict equality (`===`). This means that a context can be made guaranteed unique by using a key value that's unque under strict equality, like a unique Symbol (not using `Symbol.for()`) or an object. A context can be intentionally made to match other contexts by using a key that's not unique under strict equality like a string or `Symboo.for()`.
+Matching contexts between a provider and consumer is done with strict equality (`===`). This means that a context can be made guaranteed unique by using a key value that's unique under strict equality, like a unique Symbol (not using `Symbol.for()`) or an object. A context can be intentionally made to match other contexts by using a key that's not unique under strict equality like a string or `Symbol.for()`.
 
 ### Context types
 
@@ -126,9 +126,9 @@ A context provider will satisfy a `context-request` event, passing the `callback
 
 If the provider has data available to satisfy the request then it should immediately invoke the `callback` passing the data. If the event has a truthy `subscribe` property, then the provider can assume that the `callback` can be invoked multiple times, and may retain a reference to the callback to invoke as the data changes. If this is the case the provider should pass the second `unsubscribe` parameter to the callback when invoking it in order to allow the requester to disconnect itself from the providers notifications.
 
-The provider _MUST NOT_ retain a reference to the `callback` nor pass an `unsubscribe` callback if the `context-request` event's `subscribe` property is not truthy. Doing so may cause a memory leak as the consumer may not ever call the `unsibscribe` callback.
+The provider _MUST NOT_ retain a reference to the `callback` nor pass an `unsubscribe` callback if the `context-request` event's `subscribe` property is not truthy. Doing so may cause a memory leak as the consumer may not ever call the `unsubscribe` callback.
 
-The provider _SHOULD_ call `stopPropagation` before invoking the callback, or cal the callback in a try/catch block, to ensure that an error thrown by the callback does not prevent propagation from being stopped:
+The provider _SHOULD_ call `stopPropagation` before invoking the callback, or call the callback in a try/catch block, to ensure that an error thrown by the callback does not prevent propagation from being stopped:
 
 ```js
 this.addEventListener('context-request', event => {
@@ -220,9 +220,9 @@ class SimpleElement extends HTMLElement {
 
 Many have commented that Promises could be used instead of callback functions. One major drawback of promises is that they cannot be resolved synchronously which would complicate usage of the Context API for simple use-cases.
 
-Another issue with promises is that they do not allow multiple-resolution. Therefore we would not be able to handle cases where a requested value changes over time. This is capability that we see in the React Context API and believe is valuable for a variety of use cases.
+Another issue with promises is that they do not allow multiple-resolution. Therefore we would not be able to handle cases where a requested value changes over time. This is a capability that we see in the React Context API and believe is valuable for a variety of use cases.
 
-While we could restrict this API to only support a single resolution of a requested value, and then use observable mechanisms on that value to achieve data update behaviors, it is believe this will complicate simple use-cases unnecessarily.
+While we could restrict this API to only support a single resolution of a requested value, and then use observable mechanisms on that value to achieve data update behaviors, it is believed that this will complicate simple use-cases unnecessarily.
 
 ## Should requesters get to 'accept' providers?
 
@@ -264,7 +264,7 @@ const unsubscribe = provider.provide(this, (logger) => {
 unsubscribe(); // don't need updates anymore
 ```
 
-These alternatives do provide more capability, but its an open question as to whether or not this complexity is warranted or desired. It also opens up a larger question about what would the candidate value be? Would it have to be an object of the requested type, could it be some other protocol to determine uniformity between the requested data and the actual data? This begins to seem more complex than we really need here for unnecessary type safety overhead. It is suggested if consumers want type safety then they should use TypeScript to achieve this.
+These alternatives do provide more capability, but it's an open question as to whether or not this complexity is warranted or desired. It also opens up a larger question about what would the candidate value be? Would it have to be an object of the requested type, could it be some other protocol to determine uniformity between the requested data and the actual data? This begins to seem more complex than we really need here for unnecessary type safety overhead. It is suggested if consumers want type safety then they should use TypeScript to achieve this.
 
 # Definitions
 
@@ -280,7 +280,7 @@ export type Context<T> = {
 };
 
 /**
- * An unknown context typeU
+ * An unknown context type
  */
 export type UnknownContext = Context<unknown>;
 
