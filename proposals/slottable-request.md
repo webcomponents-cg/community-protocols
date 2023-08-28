@@ -64,8 +64,8 @@ The `remove` symbol is provided as a sentinel value for `data` to indicate that 
 
 *   ["Travel Calendar"](https://lit.dev/playground/#gist=205ee0ccc0ea4d0420608808942d2655) customization example (raw with no helpers)
 *   [Lit proof-of-concept](https://lit.dev/playground/#gist=2974fec927ef67b30d82a6ff7d05740a). Includes demos of:
-    *   Raw implementation of handling the `slottable-request` event using Lit (see [this description](https://gist.github.com/kevinpschaaf/0fe117368411f340aa3019dceeaa465e) of possible API for Lit-specific helpers)
-    *   Implementing the protocol using a Lit directive
+    *   Raw implementation of handling the `slottable-request` event using Lit
+    *   Implementing the protocol using a Lit directive (see [this description](https://gist.github.com/kevinpschaaf/0fe117368411f340aa3019dceeaa465e) of possible API for Lit-specific helpers)
     *   Implementing the protocol in a React web component wrapper
 
 
