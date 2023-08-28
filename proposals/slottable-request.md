@@ -23,7 +23,7 @@ This proposal describes an interoperable protocol for components to request that
 *   The ability for users of a component to render requested content using a templating system of their choice, using data supplied by the component.
 *   The ability for requested content to be logically composed by the requesting component into the component's shadow root at a position of its choice.
 *   The ability for requested content to be styled in the same "user" scope the component in question was created in, and using styling mechanisms of the user's choice.
-*   The ability to implement the protocol inside framework-specific wrappers or helpers that expose a user API that looks similar or identical to framework-specific patterns (i.e. "render props" for React)..
+*   The ability to implement the protocol inside framework-specific wrappers or helpers that expose a user API that looks similar or identical to framework-specific patterns (i.e. "render props" for React).
 
 
 # Design / Proposal
@@ -64,7 +64,7 @@ The `remove` symbol is provided as a sentinel value for `data` to indicate that 
 
 *   ["Travel Calendar"](https://lit.dev/playground/#gist=205ee0ccc0ea4d0420608808942d2655) customization example (raw with no helpers)
 *   [Lit proof-of-concept](https://lit.dev/playground/#gist=2974fec927ef67b30d82a6ff7d05740a). Includes demos of:
-    *   Raw implementation of handling the `slottable-request` event using Lit (see [this description](of possible API for Lit-specific helpers))
+    *   Raw implementation of handling the `slottable-request` event using Lit (see [this description](https://gist.github.com/kevinpschaaf/0fe117368411f340aa3019dceeaa465e) of possible API for Lit-specific helpers)
     *   Implementing the protocol using a Lit directive
     *   Implementing the protocol in a React web component wrapper
 
