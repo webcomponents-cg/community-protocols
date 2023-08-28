@@ -53,7 +53,7 @@ When a component wants to render customizable content, it (1) fires a `slottable
 
 Each time the `slottable-request` event is received, the user should use the provided `data` to render (or update) slotted content into the component that fired the event, where each top-level child rendered for a given request is assigned to the provided `slotName`. The `name` field on the event is used to determine what type of content to render; each unique `name` will generally map to a specific user-managed template. 
 
-Because components may request multiple slotted instances for the same conceptual `name` (for example, in the case of a 'list-item` slot request), the `slotName` may differ from the `name`. Thus, `name` should be used to select which template to render, and `slotName` should be assigned to the given rendered _instance_ and used as a unique key to identify which instance to update for subsequent requests.
+Because components may request multiple slotted instances for the same conceptual `name` (for example, in the case of a `list-item` slot request), the `slotName` may differ from the `name`. Thus, `name` should be used to select which template to render, and `slotName` should be assigned to the given rendered _instance_ and used as a unique key to identify which instance to update for subsequent requests.
 
 When requesting a specific slot instance, the event accepts an optional 3rd `key` argument; this is used to generate a unique `slotName` by suffixing the `name` with `key`.
 
