@@ -4,7 +4,7 @@ An open protocol for data passing between components.
 
 Author: Benjamin Delarre
 
-Document status: Draft
+Document status: Candidate
 
 Last update: 2021-8-26
 
