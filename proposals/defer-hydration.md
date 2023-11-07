@@ -4,7 +4,7 @@ An open protocol for controlling hydration on the client.
 
 Author: Justin Fagnani
 
-Status: Draft
+Status: Proposal
 
 Last update: 2021-06-24
 
