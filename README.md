@@ -10,10 +10,10 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 
 ## Proposals
 
-| Proposal       | Author           | Status |
-|----------------|------------------|--------|
-| [Context]      | Benjamin Delarre | Draft  |
-| [Pending Task] | Justin Fagnani   | Draft  |
+| Proposal       | Author           | Status     |
+|----------------|------------------|------------|
+| [Context]      | Benjamin Delarre | Candidate  |
+| [Pending Task] | Justin Fagnani   | Draft      |
 
 [Context]: https://github.com/webcomponents/community-protocols/blob/main/proposals/context.md
 [Pending Task]: https://github.com/webcomponents/community-protocols/blob/main/proposals/pending-task.md
