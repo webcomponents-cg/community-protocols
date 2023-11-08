@@ -5,7 +5,7 @@ aka "Render Props for Web Components"
 
 **Status**: Draft
 
-**Last Updated**: 2023-08-28
+**Last Updated**: 2023-11-08
 
 
 # Background
