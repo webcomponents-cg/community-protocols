@@ -4,6 +4,8 @@
 
 **Status**: Draft
 
+**Created**: Date here
+
 **Last updated**: Date here
 
 # Summary
@@ -12,7 +14,7 @@ A brief, one or two sentence explanation of the proposal.
 
 # Example
 
-Provide an example of the API using type definitions and/or code exmaple.
+Provide an example of the API using type definitions and/or code example.
 
 # Goals
 
@@ -29,3 +31,11 @@ Provide an example of the API using type definitions and/or code exmaple.
 # Design detail
 
 Go into detail on the design of the API, This is where you go past the surface and explain the mechanics of how the API works. If a step-by-step direction is possible, provide it.
+
+# Open questions
+
+The first draft of any proposal is not going to have all of the answers. Take this space to be clear of what is still unknown.
+
+# Previous considerations
+
+List any previous proposals or priority art that inspired this proposal.
