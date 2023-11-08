@@ -10,21 +10,28 @@ aka "Render Props for Web Components"
 
 # Background
 
-There are often use cases that require a component to render UI based on data, but where the specific rendering of the data should be controllable by the user. Use cases of this include:
+There are often use cases that require a component to render UI on-demand and/or based on data, but where the specific rendering of the data should be controllable by the user. Use cases of this include:
 
 *   A data table or tree component, which manages the rendering of cells or tree nodes, but where the given look and feel of the items is customizable by the user.
 *   A virtual list component, which optimizes rendering a list of data by only rendering a subset of user-templated items based on which array instances are visible on the screen.
+*   A tooltip component whose user-provided slotted content will be rendered rarely and on-demand based on user interactions handled by the tooltip.
 *   Components that fetch data themselves, but provide the ability for the user to customize the rendering of the data.
 
 This proposal describes an interoperable protocol for components to request that their owning context render slotted content into themselves, using data provided via the protocol.
 
 # Goals
 
-*   The ability for users of a component to render requested content using a templating system of their choice, using data supplied by the component.
-*   The ability for requested content to be logically composed by the requesting component into the component's shadow root at a position of its choice.
-*   The ability for requested content to be styled in the same "user" scope the component in question was created in, and using styling mechanisms of the user's choice.
-*   The ability to implement the protocol inside framework-specific wrappers or helpers that expose a user API that looks similar or identical to framework-specific patterns (i.e. "render props" for React).
+The high-level goal is to introduce a protocol to allow a component to request that the owner provide content to be rendered on-demand, and optionally based on data that is provided by the component.
 
+Specific goals within this include:
+
+*   The ability for users of a component to render requested content using a templating system of their choice.
+*   The ability for users of a component to render requested content using data supplied by the component.
+*   The ability for requested content to be rendered into the requesting component's shadow root at a position of its choice.
+*   The ability for requested content to be styled in the same "user" scope the component in question was created in, and using styling mechanisms of the user's choice.
+*   The ability to use a component that requests content via the protocol in plain JS without requiring a framework.
+*   The ability to implement the protocol inside framework-specific wrappers or helpers that expose a user API that looks similar or identical to framework-specific patterns (i.e. "render props" for React).
+*   The ability to provide slotted content lazily for better performance, since the component may defer rendering slotted content based on the state of the component.
 
 # Design / Proposal
 
@@ -34,7 +41,7 @@ This proposal describes an interoperable protocol for components to request that
 Concretely, the protocol involves dispatching a well-known DOM event to request slotted content (aka "[slottables](https://dom.spec.whatwg.org/#light-tree-slotables)", per the DOM spec) be rendered with the provided `data` argument and assigned to the given `slotName`:
 
 ```ts
-export class SlotableRequestEvent<Name extends string, T = unknown> extends Event {
+export class SlottableRequestEvent<Name extends string, T = unknown> extends Event {
   readonly data: T | typeof remove;
   readonly name: Name;
   readonly slotName: string;
