@@ -14,7 +14,7 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 |----------------|------------------|------------|
 | [Context]      | Benjamin Delarre | Candidate  |
 | [Pending Task] | Justin Fagnani   | Draft      |
-| [Slottable Request] | Kevin Schaaf   | Draft  |
+| [Slottable Request] | Kevin Schaaf   | Proposal  |
 
 [Context]: https://github.com/webcomponents/community-protocols/blob/main/proposals/context.md
 [Pending Task]: https://github.com/webcomponents/community-protocols/blob/main/proposals/pending-task.md
