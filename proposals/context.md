@@ -54,7 +54,7 @@ Components which wish to receive some data from their ancestors should initiate 
 TypeScript interface:
 
 ```typescript
-interface ContextEvent<T extends Context<unknown>> extends Event {
+interface ContextRequestEvent<T extends Context<unknown, unknown>> extends Event {
   /**
    * The name of the context that is requested
    */
@@ -74,7 +74,7 @@ A full TypeScript definition for this event and its associated types can be foun
 
 ## Context objects
 
-`ContextEvent`s carry a `context` value that is used to identify specific contexts. This value may sometimes be referred to as the "context key", and can be of any type.
+`ContextRequestEvent`s carry a `context` value that is used to identify specific contexts. This value may sometimes be referred to as the "context key", and can be of any type.
 
 ### Context equality
 
@@ -142,14 +142,14 @@ A provider does not necessarily have to be a Custom Element, but this may be a c
 
 ## Usage
 
-An element which wishes to receive some context and participate in the Context API should emit an event with the `context-request` type. It is suggested that an implementation of the `ContextEvent` would be used something like this:
+An element which wishes to receive some context and participate in the Context API should emit an event with the `context-request` type. It is suggested that an implementation of the `ContextRequestEvent` would be used something like this:
 
 ```js
 // get a context from somewhere (this could be in any module)
 const coolThingContext = createContext('cool-thing');
 
 this.dispatchEvent(
-  new ContextEvent(
+  new ContextRequestEvent(
     coolThingContext, // the context we want to retrieve
     (coolThing) => {
       this.myCoolThing = coolThing; // do something with value
@@ -170,7 +170,7 @@ Consumers should be aware that given that there is a loose coupling between impl
 let providedAlready = false;
 this.dispatchEvent(
   // Note, this event is not a subscribing event:
-  new ContextEvent(coolThingContext, (coolThing, unsubscribe) => {
+  new ContextRequestEvent(coolThingContext, (coolThing, unsubscribe) => {
     // Guard against multiple callback calls in case of bad actor providers
     if (!providedAlready) {
       this.myCoolThing = coolThing; // do something with value
@@ -191,7 +191,7 @@ A more complete example is as follows:
 class SimpleElement extends HTMLElement {
   connectedCallback() {
     this.dispatchEvent(
-      new ContextEvent(
+      new ContextRequestEvent(
         loggerContext,
         (value, unsubscribe) => {
           // Call the old unsubscribe callback if the unsubscribe call has
@@ -230,7 +230,7 @@ The current API as proposed does not allow a requestor to 'approve' that a provi
 
 ```js
 this.dispatchEvent(
-  new ContextEvent(loggerContext, (candidate) => {
+  new ContextRequestEvent(loggerContext, (candidate) => {
     if (typeof candidate.log === 'function' && typeof candidate.info === 'function') {
       // we can accept this candidate so return the callback to the provider
       return (logger, unsubscribe) => {
@@ -248,7 +248,7 @@ In this proposal we would likely enforce that the callback always be invoked syn
 Alternative APIs could also be explored in this approach, we could for instance have providers append themselves to a list of potential providers along with candidate value objects, and then allow our components to pick which provider they wish to use:
 
 ```js
-const contextRequest = new ContextEvent(loggerContext);
+const contextRequest = new ContextRequestEvent(loggerContext);
 this.dispatchEvent(context);
 if (!contextRequest.providers) {
   // no providers for logger
@@ -272,37 +272,30 @@ Below are some TypeScript definitions for the common parts of the proposed proto
 
 ```typescript
 /**
- * A Context object defines an optional initial value for a Context, as well as a name identifier for debugging purposes.
+ * A context key.
+ *
+ * A context key can be any type of object, including strings and symbols. The
+ *  Context type brands the key type with the `__context__` property that
+ * carries the type of the value the context references.
  */
-export type Context<T> = {
-  name: string;
-  initialValue?: T;
-};
+export type Context<KeyType, ValueType> = KeyType & {__context__: ValueType};
 
 /**
  * An unknown context type
  */
-export type UnknownContext = Context<unknown>;
+export type UnknownContext = Context<unknown, unknown>;
 
 /**
  * A helper type which can extract a Context value type from a Context type
  */
-export type ContextType<T extends UnknownContext> = T extends Context<infer Y>
-  ? Y
-  : never;
+export type ContextType<T extends UnknownContext> =
+  T extends Context<infer _, infer V> ? V : never;
 
 /**
  * A function which creates a Context value object
  */
-export function createContext<T>(
-  name: string,
-  initialValue?: T
-): Readonly<Context<T>> {
-  return {
-    name,
-    initialValue,
-  };
-}
+export const createContext = <ValueType>(key: unknown) =>
+  key as Context<typeof key, ValueType>;
 
 /**
  * A callback which is provided by a context requester and is called with the value satisfying the request.
@@ -323,13 +316,13 @@ export type ContextCallback<ValueType> = (
  * multiple times if the value is changed, if this is the case the provider should pass an `unsubscribe`
  * function to the callback which requesters can invoke to indicate they no longer wish to receive these updates.
  */
-export class ContextEvent<T extends UnknownContext> extends Event {
+export class ContextRequestEvent<T extends UnknownContext> extends Event {
   public constructor(
     public readonly context: T,
     public readonly callback: ContextCallback<ContextType<T>>,
     public readonly subscribe?: boolean
   ) {
-    super("context-request", { bubbles: true, composed: true });
+    super('context-request', {bubbles: true, composed: true});
   }
 }
 
@@ -339,7 +332,7 @@ declare global {
      * A 'context-request' event can be emitted by any element which desires
      * a context value to be injected by an external provider.
      */
-    "context-request": ContextEvent<UnknownContext>;
+    'context-request': ContextRequestEvent<Context<unknown, unknown>>;
   }
 }
 ```
