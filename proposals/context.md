@@ -96,11 +96,11 @@ Then values can be cast to this to create a typed context key:
 export const myContext = 'my-context' as Context<string, number>;
 ```
 
-The type of a Context can then be extracted with a utility type:
+The value type of a Context can then be extracted with a utility type:
 
 ```ts
-export type ContextType<Key extends Context<unknown, unknown>> =
-  Key extends Context<unknown, infer ValueType> ? ValueType : never;
+export type ContextType<T extends UnknownContext> =
+  T extends Context<infer _, infer V> ? V : never;
 ```
 
 Usage:
