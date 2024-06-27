@@ -122,7 +122,7 @@ export const createContext = <ValueType>(key: unknown) =>
 
 ## Context Providers
 
-A context provider will satisfy a `context-request` event, passing the `callback` the requested data whenever the data changes. A provider will attach an event listener to the DOM tree to catch the event, and if it will be able to satisfy the request _MUST_ call `stopPropagation` on the event.
+A context provider will satisfy a `context-request` event, passing the `callback` the requested data whenever the data changes. A provider will attach an event listener to the DOM tree to catch the event, and if it will be able to satisfy the request it _MUST_ call `stopPropagation` on the event.
 
 If the provider has data available to satisfy the request then it should immediately invoke the `callback` passing the data. If the event has a truthy `subscribe` property, then the provider can assume that the `callback` can be invoked multiple times, and may retain a reference to the callback to invoke as the data changes. If this is the case the provider should pass the second `unsubscribe` parameter to the callback when invoking it in order to allow the requester to disconnect itself from the providers notifications.
 
