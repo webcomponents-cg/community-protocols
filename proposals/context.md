@@ -128,6 +128,8 @@ If the provider has data available to satisfy the request then it should immedia
 
 The provider _MUST NOT_ retain a reference to the `callback` nor pass an `unsubscribe` callback if the `context-request` event's `subscribe` property is not truthy. Doing so may cause a memory leak as the consumer may not ever call the `unsubscribe` callback.
 
+To safeguard against memory leaks caused by non-compliant consumers that don't call the `unsubscribe` callback, it is recommended that the provider uses WeakRefs to reference subscription callbacks.
+
 The provider _SHOULD_ call `stopPropagation` before invoking the callback, or call the callback in a try/catch block, to ensure that an error thrown by the callback does not prevent propagation from being stopped:
 
 ```js
