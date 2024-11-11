@@ -69,6 +69,7 @@ The `remove` symbol is provided as a sentinel value for `data` to indicate that 
 
 ## Examples
 
+*   ["Simple list example"](https://lit.dev/playground/#gist=2e14f25a47afadcbb18254f7e74d9871) A simple list that demonstrates basic slottable request protocol with list items.
 *   ["Travel Calendar"](https://lit.dev/playground/#gist=205ee0ccc0ea4d0420608808942d2655) customization example (raw with no helpers)
 *   [Lit proof-of-concept](https://lit.dev/playground/#gist=2974fec927ef67b30d82a6ff7d05740a). Includes demos of:
     *   Raw implementation of handling the `slottable-request` event using Lit
