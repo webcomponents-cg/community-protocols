@@ -208,7 +208,16 @@ An element can implement this protocol by specifying a static `define` function:
 ```javascript
 export class MyElement extends HTMLElement {
   static define() {
-    if (customElements.get('my-element')) return;
+    // Check if the tag name was already defined by another class.
+    const existing = customElements.get(tagName);
+    if (existing) {
+      if (existing === MyElement) {
+        return; // Already defined as the correct class, no-op.
+      } else {
+        throw new Error(`Tag name \`${tagName}\` already defined as \`${
+            existing.name}\`.`);
+      }
+    }
 
     customElements.define('my-element', MyElement);
   }
@@ -306,11 +315,7 @@ location. It is perfectly valid to write:
 
 ```javascript
 export class MyElement extends HTMLElement {
-  static define() {
-    if (customElements.get('my-element')) return;
-
-    customElements.define('my-element', MyElement);
-  }
+  static define() { /* ... */ }
 
   doSomething() {
     console.log('Doing something!');
@@ -334,6 +339,139 @@ themselves by calling `MyElement.define`.
 
 Some more nuanced questions with this API.
 
+### Naming
+
+The name `define` was chosen for being short, direct, and explicit about what it
+does: defining an element in the registry.
+
+This name might be too short such that developers may want to use the name for
+their own purposes. For example, a custom element representing words in a
+dictionary may want a `define` function which shows the definition of its word.
+
+Another challenge is that `define` does not always define its element. If the
+associated element is already defined, then the `define` function is technically
+a no-op, which can be confusing.
+
+```javascript
+import { MyElement } from './my-element.js';
+
+// Defines the element.
+MyElement.define();
+
+// Silently does nothing.
+MyElement.define();
+```
+
+The necessary post-condition for this function is that `MyElement` is defined in
+the custom elements registry. Even if the second call technically had no effect,
+the outcome is still that `MyElement` is definitely defined.
+
+Alternatives names may be considered for bike-shedding.
+
+### Scoped Custom Element Registries support
+
+The
+[Scoped Custom Element Registries proposal](https://github.com/WICG/webcomponents/blob/gh-pages/proposals/Scoped-Custom-Element-Registries.md)
+is not yet finalized and therefore not included in the implementation of this
+proposal. However, if and when that proposal is completed, it can be easily
+included with a small addition which accepts a custom element registry and a tag
+name as input parameters:
+
+```javascript
+export class MyElement extends HTMLElement {
+  static define(registry = customElements, tagName = 'my-element') {
+    // Tag name can only be modified when not in the global registry.
+    if (registry === customElements && tagName !== 'my-element') {
+      throw new Error('Cannot use a non-default tag name in the global custom element registry.');
+    }
+
+    // Check if the tag name was already defined by another class.
+    const existing = registry.get(tagName);
+    if (existing) {
+      if (existing === Clazz) {
+        return; // Already defined as the correct class, no-op.
+      } else {
+        throw new Error(`Tag name \`${tagName}\` already defined as \`${
+            existing.name}\`.`);
+      }
+    }
+
+    // Define the class.
+    registry.define(tagName, Clazz, options);
+  }
+}
+
+// Usage:
+const registry = new CustomElementRegistry();
+MyElement.define(registry);
+
+// With custom tag name:
+MyElement.define(registry, 'my-other-element');
+```
+
+This implementation registers the custom element on any given registry,
+defaulting to the global registry.
+
+Attempting to define a custom tag name on the global registry still throws in
+order to maintain the invariant that all consumers of the global registry use
+the agreed-upon name. See [Custom tag name](#custom-tag-name).
+
+### Scoped Custom Element Registries as an alternative
+
+Scoped Custom Element Registries have many nice properties which potentially
+allow them to serve as an alternative solution to many of the goals of this
+proposal.
+
+Scoped registries do not require global side-effects like a top-level
+`customElements.define` call and allow every consumer to create their own
+registry and define dependencies at an appropriate time. This enables components
+to be tree-shaken when not used.
+
+```javascript
+class MyElement extends HTMLElement {
+  // ...
+}
+
+function useMyElement() {
+  const myRegistry = new CustomElementRegistry();
+  myRegistry.define('my-element', MyElement);
+  // ...
+}
+```
+
+However, scoped custom element registries have some drawbacks which make them a
+non-ideal solution to this proposal.
+
+First, scoped registries are coupled to shadow DOM, which not all custom
+elements use. This on-demand definitions proposal supports all custom elements,
+even light DOM components.
+
+Second, scoped registries require creating an entirely distinct registry with
+potentially decoupled tag names. This places a constraint on consumers which
+need to manually define a mapping of `some-tag-name` -> `MyElement`. This
+constraint is reasonable within the context of a scoped registry, but is
+completely unnecessary for the goals of this proposal. Not every consumer of an
+element wants its own custom registry or decouple and own its own mapping of tag
+names.
+
+Third, as shown in
+[scoped registries support](#scoped-custom-element-registries-support), this
+proposal can support scoped registries and even provides some benefit for them.
+Having a `define` function owned by the component author provides an abstraction
+over the tag name in the global registry and
+[the `options` field](#allowing-options).
+
+Scoped registries also require removing the top-level `customElements.define`
+call anyways to realize their benefits, which on-demand definitions naturally
+achieves as well. Also, some component consumers may use scoped custom elements,
+but some may not and can still receive tree-shaking benefits. It is perfectly
+valid for two different consumers to call `MyElement.define()` in the global
+registry while a third consumer uses a scoped registry. All three receive the
+benefits of this proposal.
+
+For these reasons, scoped registries are not a better solution for the goals of
+this proposal.
+
 ### No-op when already defined
 
 `define` silently no-ops when its element is already defined, meaning multiple
@@ -348,14 +486,7 @@ manually call `customElements.getName`, which is extra effort which accomplishes
 very little. No user of a custom element can safely assume it is the _only_ user
 of that element and unconditionally call `define`.
 
-It is perhaps a little confusing that a function called `define` might not
-actually _define_ the component if it happens to already be defined. `define`
-could potentially be renamed to be more clear about this possibility, but the
-end result of calling the function is that the element is defined. So calling
-`define` at a time when the element is already defined does not necessarily
-violate any potential assumptions about its behavior which come from the name.
-
-### Built-in tag name
+### Custom tag name
 
 `define` only supports defining the element with one hard-coded tag name. This
 behavior is equivalent to calling `customElements.define` in the top-level
@@ -367,6 +498,8 @@ consumers more flexibility.
 ```javascript
 export class MyElement extends HTMLElement {
   static define(tagName) {
+    // ...
+
     customElements.define(tagName ?? 'my-element', MyElement);
   }
 }
@@ -387,6 +520,82 @@ safely use a custom element without interfering with each other or relying on
 unexpected side-effects. Allowing each consumer to pick its own tag name and
 break any other consumer using a different tag name actively fights against the
 goals of this protocol.
+
+### Allowing options
+
+The static `define` function does not support any additional options, such as
+[the options of `customElements.define`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define#options).
+
+ALTERNATIVE PROPOSAL: Allow `options` to be passed through as parameters to
+`define`:
+
+```javascript
+class MyElement extends HTMLElement {
+  static define(options) {
+    // ...
+
+    customElements.define('my-element', MyElement, options);
+  }
+}
+```
+
+Currently, the only option supported by `customElements.define` is
+[`extends`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define#extends)
+which allows a custom element to extend an existing built-in tag name and
+leverage the
+[`is` attribute](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements#using_a_custom_element).
+
+Whether or not an element extends a built-in class is a decision made by the
+author of that element, not its consumers. Allowing consumers to decide the
+`extends` option would increase the likelihood of the field being set
+incorrectly and encountering unsupported behavior.
+
+It also raises the question of what happens when two `define` calls disagree on
+the option.
+
+```javascript
+import { MyElement } from './my-element.js';
+
+export function createParagraph() {
+  MyElement.define({ extends: 'p' });
+  return document.createElement('p', {
+    is: 'my-element',
+  });
+}
+
+export function createSection() {
+  MyElement.define({ extends: 'section' });
+  return document.createElement('section', {
+    is: 'my-element',
+  });
+}
+```
+
+Whichever function is called first will dictate the actual `extends` value used.
+Meanwhile the other function will find `MyElement` defined with the wrong
+`extends` value and its returned element will not be an instance of `MyElement`
+as expected. If ordering is non-deterministic or unpredictable, this behavior
+can easily lead to bugs.
+
+Instead, custom element definition options may only be specified within the
+`define` function itself, where the component author can control its value.
+
+```javascript
+class MyElement extends HTMLParagraphElement {
+  static define() {
+    // ...
+
+    customElements.define('my-element', MyElement, { extends: 'p' });
+  }
+}
+```
+
+`customElements.define` is naturally creating a side-effect which stores the
+provided component class and its configuration. When multiple consumers are
+defining a component on-demand, they need to agree on that configuration. This
+implies that no consumer can have direct control over the configuration or else
+it would risk breaking other consumers when they are forced to use a component
+with a configuration they did not expect.
 
 ### Defining entry-point elements
 
