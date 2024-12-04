@@ -235,25 +235,27 @@ this primitive.
 ### Framework utilization
 
 As two small examples, [HydroActive](https://github.com/dgp1130/HydroActive/)
-[currently requires a reference to a component class](#hydroactive) before
-making a component accessible to developers. This could automatically call
-`define` for any provided classes to ensure they are properly defined being
-being invoked by the user.
+already implements this draft. All `HydroActive` components come with a built in
+`define` implementation and using a component
+[requires a reference to its component class](#hydroactive) before making that
+component accessible to developers. HydroActive uses this class to automatically
+call `define` and ensure they are properly defined being being interacted with
+by the developer.
 
 DISCLAIMER: The author of this proposal is also the maintainer of HydroActive.
 
 ```javascript
-import {defineComponent} from 'hydroactive';
+import {component} from 'hydroactive';
 import {SomeComp} from './some-comp.js';
 
-export const MyElement = defineComponent('my-element', (host) => {
-  // `.access(SomeComp)` could implicitly call `SomeComp.define()`.
+export const MyElement = component('my-element', (host) => {
+  // `.access(SomeComp)` implicitly calls `SomeComp.define()`.
   host.query('some-comp').access(SomeComp).element.doSomething();
 });
 ```
 
 This approach provides a guarantee that `SomeComp` is defined before
-`doSomething` is called. It also allows `SomeComp` to be tree shaken from the
+`doSomething` is called. It also allows `SomeComp` to be tree-shaken from the
 bundle if it is not used by `MyElement` or if `MyElement` is itself unused and
 eligible for tree shaking.
 
@@ -483,9 +485,9 @@ been defined and hydrated. To that end, HydroActive intentionally hides custom
 elements from developers and throws when attempting to access them directly.
 
 ```javascript
-import {defineComponent} from 'hydroactive';
+import {component} from 'hydroactive';
 
-export const MyElement = defineComponent('my-element', (host) => {
+export const MyElement = component('my-element', (host) => {
   // Can access native elements like `<div>` directly.
   host.query('div').access().element.textContent = 'Hello, World!';
 
@@ -512,7 +514,8 @@ custom element to ensure that this dependency exists.
 
 However even this approach is forced to assume that a custom element class
 declaration is co-located with a top-level `customElement.define` call. This
-assumption also prevents tree shaking of any dependencies.
+assumption also prevents tree-shaking of any dependencies. HydroActive
+implemented the on-demand definitions proposal to mitigate these issues.
 
 HydroActive's design with respect to file ordering is described more thoroughly
 in [this video](https://youtu.be/euFQRqrTSMk?si=i5HKHayt3QvuNytf&t=736), though
