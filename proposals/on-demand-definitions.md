@@ -1,6 +1,6 @@
-# Static `define` Protocol
+# On-Demand Definitions Protocol
 
-A protocol for defining custom elements without relying on top-level
+A protocol for defining custom elements on-demand without relying on top-level
 side-effects.
 
 **Author**: [dgp1130](https://github.com/dgp1130/)
@@ -197,7 +197,9 @@ ordering of these two files and lead to unexpected errors.
 ## Overview
 
 This protocol specifies a `static` `define` property on custom elements which
-calls `customElements.define` if the element has not already been defined.
+calls `customElements.define` if the element has not already been defined. This
+allows anything with a reference to a component's class to define that component
+"on demand" before using it.
 
 ### Example
 
@@ -318,7 +320,7 @@ MyElement.define();
 document.querySelector('my-element').doSomething();
 ```
 
-Even though `MyElement.define` is called in the top-level scope, this is still
+Even though `MyElement.define` is called in the top-level scope, this is still a
 correct implementation and usage of the static `define`. Any other consumers of
 `MyElement` can call `MyElement.define` to enforce that the element is indeed
 defined before they use it, so this is still a useful pattern. The fact that the
