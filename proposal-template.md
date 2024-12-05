@@ -2,7 +2,7 @@
 
 **Author**: Name here
 
-**Status**: Draft
+**Status**: Proposal
 
 **Created**: Date here
 
