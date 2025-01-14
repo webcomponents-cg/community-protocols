@@ -53,7 +53,7 @@ export class SlottableRequestEvent<Name extends string, T = unknown> extends Eve
   }
 }
 
-export const remove = Symbol('slottable-request-remove');
+export const remove = Symbol.for('slottable-request-remove');
 ```
 
 When a component wants to render customizable content, it (1) fires a `slottable-request` event for a given slot name, and (2) renders a `<slot>` element into its shadow root corresponding to the requested slot name.
@@ -64,7 +64,7 @@ Because components may request multiple slotted instances for the same conceptua
 
 When requesting a specific slot instance, the event accepts an optional 3rd `key` argument; this is used to generate a unique `slotName` by suffixing the `name` with `key`.
 
-The `remove` symbol is provided as a sentinel value for `data` to indicate that the given content assigned to `slotName` should be removed, and should be fired when the associated `<slot>` is no longer rendered to avoid leaking light-DOM children.
+The `remove` symbol is provided as a sentinel value for `data` to indicate that the given content assigned to `slotName` should be removed, and should be fired when the associated `<slot>` is no longer rendered to avoid leaking light-DOM children. It's defined as `Symbol.for('slottable-request-remove')` so it can be shared between several implementations and make them interoperable.
 
 
 ## Examples
