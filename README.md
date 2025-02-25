@@ -16,11 +16,13 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 | [Defer Hydration] | Justin Fagnani | Proposal |
 | [Pending Task] | Justin Fagnani   | Draft      |
 | [Slottable Request] | Kevin Schaaf   | Proposal  |
+| [Performance Markers] | Matheus Cardoso | Proposal |
 
 [Context]: https://github.com/webcomponents/community-protocols/blob/main/proposals/context.md
 [Defer Hydration]: https://github.com/webcomponents/community-protocols/blob/main/proposals/defer-hydration.md
 [Pending Task]: https://github.com/webcomponents/community-protocols/blob/main/proposals/pending-task.md
 [Slottable Request]: https://github.com/webcomponents/community-protocols/blob/main/proposals/slottable-request.md
+[Performance Markers]: https://github.com/webcomponents/community-protocols/blob/main/proposals/performance-markers.md
 
 ## Status
 
