@@ -6,7 +6,7 @@ Author: Benjamin Delarre
 
 Document status: Candidate
 
-Last update: 2021-8-26
+Last update: 2025-05-02
 
 # Background
 
@@ -338,3 +338,20 @@ declare global {
   }
 }
 ```
+
+# Changes
+
+- 2025-05-02: Added changelog to track changes.
+- 2025-05-02: Changed `stopPropagation` to `stopImmediatePropagation`.
+- 2024-10-17: Added a provider recommendation to safeguard against memory leaks.
+- 2024-06-27: Cleaned up proposal overview.
+- 2024-04-09: Fixed type inconsistencies.
+- 2023-11-04: Moved proposal to candidate status.
+- 2023-04-13: Fixed typos.
+- 2023-02-03: Renamed `multiple` to `subscribe`.
+- 2023-02-03: Updated context object interface description to allow any type as a context.
+- 2022-05-20: Fixed typos.
+- 2022-04-21: Clarified ordering of `stopPropagation` / `callback`.
+- 2021-11-22: Fixed typos.
+- 2021-09-01: Cleaned up proposal overview.
+- 2021-07-02: Initial draft.
