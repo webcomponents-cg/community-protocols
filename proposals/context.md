@@ -6,7 +6,7 @@ Author: Benjamin Delarre
 
 Document status: Candidate
 
-Last update: 2021-8-26
+Last update: 2025-05-02
 
 # Background
 
@@ -43,7 +43,7 @@ At a high level, the Context API is an event-based protocol that components can 
 - A component requiring some data fires a `context-request` event.
 - The event carries a `context` value that denotes the data requested, and a `callback` which will receive the data.
 - Providers can attach event listeners for `context-request` events to handle them and provide the requested data.
-- Once a provider satisfies a request it calls `stopPropagation()` on the event.
+- Once a provider satisfies a request it calls `stopImmediatePropagation()` on the event.
 
 # Details
 
@@ -122,7 +122,7 @@ export const createContext = <ValueType>(key: unknown) =>
 
 ## Context Providers
 
-A context provider will satisfy a `context-request` event, passing the `callback` the requested data whenever the data changes. A provider will attach an event listener to the DOM tree to catch the event, and if it will be able to satisfy the request it _MUST_ call `stopPropagation` on the event.
+A context provider will satisfy a `context-request` event, passing the `callback` the requested data whenever the data changes. A provider will attach an event listener to the DOM tree to catch the event, and if it will be able to satisfy the request it _MUST_ call `stopImmediatePropagation` on the event.
 
 If the provider has data available to satisfy the request then it should immediately invoke the `callback` passing the data. If the event has a truthy `subscribe` property, then the provider can assume that the `callback` can be invoked multiple times, and may retain a reference to the callback to invoke as the data changes. If this is the case the provider should pass the second `unsubscribe` parameter to the callback when invoking it in order to allow the requester to disconnect itself from the providers notifications.
 
@@ -130,11 +130,11 @@ The provider _MUST NOT_ retain a reference to the `callback` nor pass an `unsubs
 
 To safeguard against memory leaks caused by non-compliant consumers that don't call the `unsubscribe` callback, it is recommended that the provider uses WeakRefs to reference subscription callbacks.
 
-The provider _SHOULD_ call `stopPropagation` before invoking the callback, or call the callback in a try/catch block, to ensure that an error thrown by the callback does not prevent propagation from being stopped:
+The provider _SHOULD_ call `stopImmediatePropagation` before invoking the callback, or call the callback in a try/catch block, to ensure that an error thrown by the callback does not prevent immediate propagation from being stopped:
 
 ```js
 this.addEventListener('context-request', event => {
-  event.stopPropagation();
+  event.stopImmediatePropagation();
   // If the callback throws, propagation is already stopped
   event.callback('some data');
 });
@@ -338,3 +338,20 @@ declare global {
   }
 }
 ```
+
+# Changes
+
+- 2025-05-02: Added changelog to track changes.
+- 2025-05-02: Changed `stopPropagation` to `stopImmediatePropagation`.
+- 2024-10-17: Added a provider recommendation to safeguard against memory leaks.
+- 2024-06-27: Cleaned up proposal overview.
+- 2024-04-09: Fixed type inconsistencies.
+- 2023-11-04: Moved proposal to candidate status.
+- 2023-04-13: Fixed typos.
+- 2023-02-03: Renamed `multiple` to `subscribe`.
+- 2023-02-03: Updated context object interface description to allow any type as a context.
+- 2022-05-20: Fixed typos.
+- 2022-04-21: Clarified ordering of `stopPropagation` / `callback`.
+- 2021-11-22: Fixed typos.
+- 2021-09-01: Cleaned up proposal overview.
+- 2021-07-02: Initial draft.
