@@ -59,6 +59,42 @@ const _internals = this.attachInternals() // this underscores the need for consi
 
 This makes logical sense to make `attachInternals` internal, but based on the established goal of this being a public API that is consistently exposed to third-parties it seems a public declaration would be more suitable.
 
+# Supported Access
+
+## Global weakmap
+
+```ts
+globalThis._elementInternals ??= new WeakMap<Element, ElementInternals>;
+```
+```ts
+import type { ReactiveController } from 'lit';
+export class InternalsController implements ReactiveController {
+  constructor(host: Element) {
+    this.#internals = host.attachInternals();
+    globalThis._elementInternals.set(host, this.#internals);
+  } 
+}
+```
+```ts
+import { InternalsController } from '../internals-controller.ts';
+import { LitElement } from 'lit';
+import { customElement } from 'lit/decorators.js';
+
+@customElement('has-internals')
+class HasInternals extends LitElement {
+  // internals not exposed on element public api
+  #internals = new InternalsController(this);
+}
+```
+
+## Well-known properties
+
+```ts
+class HasInternals extends HTMLElement {
+  // axe core tests for this property
+  internals = this.attachInternals();
+}
+```
 
 # Open questions
 
