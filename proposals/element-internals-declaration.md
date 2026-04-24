@@ -22,14 +22,13 @@ For those reasons, it would be good for the Web Components Community Group to ha
 
 ## Goals
 
-- Determine an agreed upon declaration naming convention for exposing `ElementInternals` to third-party tooling.
-- Identify all the places (ARIA roles, custom states, forms, SSR, etc) where consistent interface would be ideal.
+- Determine an agreed upon side-channel convention (e.g. a global WeakMap) for exposing `ElementInternals` to third-party diagnostic and accessibility audit tooling.
+- Enable high-fidelity accessibility auditing (e.g., ARIA roles, custom states) for components using `ElementInternals` without requiring developers to intentionally bloat their public APIs.
 
 ## Non Goals
 
--  Expose internals as a public API, in perpetuity
-- This is a temporary stopgap until browsers expose this information via 
-  the accessibility tree.
+- **Providing a public API for application logic:** While this proposal does technically expose internals globally, creating potential for abuse, this is an accepted risk strictly in exchange for critical accessibility audit gains. Any use of this registry for application state management, styling, or cross-component communication is explicitly unsupported.
+- **Permanence:** This protocol is a temporary stopgap. When browser vendors provide native APIs to expose the accessibility tree to external tools, this registry can and will be removed. We do not guarantee backwards compatibility for unauthorized or abusive use cases when that time comes.
 
 ## Protocol
 
@@ -94,9 +93,9 @@ class HasInternals extends LitElement {
 }
 ```
 
-# Open questions
+## Security Considerations
 
-1. Would closed shadowroots need/desire something a private field like `#internals`? 
+Because this protocol exposes `ElementInternals` (which contains form state) to `globalThis`, it theoretically allows third-party scripts to access encapsulated data. However, in a browser environment, any script with sufficient privileges to read `globalThis._elementInternals` already possesses the ability to monkey-patch `HTMLElement.prototype.attachInternals` to achieve the exact same access. Therefore, this proposal does not introduce a fundamentally new attack vector.
 
 # Previous considerations
 
