@@ -20,52 +20,39 @@ Another potential win here would be an SSR story where tooling to make static HT
 
 For those reasons, it would be good for the Web Components Community Group to have an agreed upon standard for exposing `ElementInternals` so other tooling can build from our convention.
 
-# Example
-
-Here is a softball proposal for how we could consistently expose internals publicly.
-
-```ts
-class FooElement extends HTMLElement {
-  // @public
-  const internals: ElementInternals = this.attachInternals()
-}
-```
-
 # Goals
 
 - Determine an agreed upon declaration naming convention for exposing `ElementInternals` to third-party tooling.
 - Identify all the places (ARIA roles, custom states, forms, SSR, etc) where consistent interface would be ideal.
 
-# Non-goals
-
-- Fight about names forever.
-
-# Design detail
-
-Infinite options exist on what we could name the interface each with its plusses and minuses.
-
-```js
-const elementInternals = this.attachInternals() // verbose but specific
-const internals = this.attachInternals() // shorter but more vague
-const guts = this.attachInternals() // this is nonsense.
-```
-
-Another common convention is to attach internals as a private/internal variable.
-
-```js
-const #internals = this.attachInternals() // very private
-const _internals = this.attachInternals() // this underscores the need for consistency
-```
-
-This makes logical sense to make `attachInternals` internal, but based on the established goal of this being a public API that is consistently exposed to third-parties it seems a public declaration would be more suitable.
-
-# Supported Access
-
-## Global weakmap
+In order to retain the _internal_ aspect of `ElementInternals`, it's ideal to not expose it as a public property.
 
 ```ts
-globalThis._elementInternals ??= new WeakMap<Element, ElementInternals>;
+#internals = this.attachInternals();
 ```
+
+But based on the established goal of consistently exposing internals specifically to accessibility tooling, a global weak map is most appropriate
+
+```ts
+declare global {
+  var _elementInternals: WeakMap<Element, ElementInternals>;
+}
+
+globalThis._elementInternals ??= new WeakMap<Element, ElementInternals>();
+
+class HasInternals extends HTMLElement {
+  #internals = this.attachInternals();
+  constructor() {
+    super();
+    globalThis._elementInternals.set(this, this.#internals);
+  }
+}
+
+customElements.define('has-internals', HasInternals);
+```
+
+Here's an example of a Lit Reactive Controller which could handle this for all elements in a project:
+
 ```ts
 import type { ReactiveController } from 'lit';
 export class InternalsController implements ReactiveController {
@@ -84,15 +71,6 @@ import { customElement } from 'lit/decorators.js';
 class HasInternals extends LitElement {
   // internals not exposed on element public api
   #internals = new InternalsController(this);
-}
-```
-
-## Well-known properties
-
-```ts
-class HasInternals extends HTMLElement {
-  // axe core tests for this property
-  internals = this.attachInternals();
 }
 ```
 
