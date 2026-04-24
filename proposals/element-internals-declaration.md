@@ -1,8 +1,8 @@
-## Proposal name
+## Exposing ElementInternals to Accessibility Audit Tools
 
 **Authors**: Dave Rupert, Benny Powers
 
-**Status**: Proposal
+**Status**: Draft
 
 **Created**: April 22, 2025
 
