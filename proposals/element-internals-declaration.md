@@ -59,6 +59,18 @@ class HasInternals extends HTMLElement {
 customElements.define('has-internals', HasInternals);
 ```
 
+Alternatively, page owners may choose to add a blocking script before any elements are defined:
+
+```ts
+globalThis._elementInternals ??= new WeakMap<Element, ElementInternals>();
+const originalAttachInternals = HTMLElement.attachInternals;
+HTMLElement.attachInternals = function(...args) {
+  const internals = originalAttachInternals.apply(this, args);
+  globalThis._elementInternals.set(this, internals);
+  return internals;
+};
+```
+
 Here's an example of a Lit Reactive Controller which could handle this for all elements in a project:
 
 ```ts
