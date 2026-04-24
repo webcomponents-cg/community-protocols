@@ -1,16 +1,16 @@
-# Proposal name
+## Proposal name
 
-**Author**: Dave Rupert
+**Authors**: Dave Rupert, Benny Powers
 
 **Status**: Proposal
 
 **Created**: April 22, 2025
 
-**Last updated**: April 22, 2025
+**Last updated**: April 24, 2026
 
-# Summary
+## Summary
 
-There's no standard API to expose `ElementInternals` to `@public`. Third-party tooling like Automated Accessibility Testing tools are unable to reliably "guess" and find those exposed internals (e.g. cannot find `aria-role`). Problems that arise from this are best summed up on the DequeuLabs aXe-core Github Repo:
+There's currently no way for  automated accessibility testing tools to gain necessary access to element internals. This leads to false positives (e.g. cannot find `aria-role`), and can confuse downstream users of web components. Problems that arise from this are best summed up on the DequeuLabs aXe-core Github Repo:
 
 https://github.com/dequelabs/axe-core/issues/4259
 
@@ -20,10 +20,18 @@ Another potential win here would be an SSR story where tooling to make static HT
 
 For those reasons, it would be good for the Web Components Community Group to have an agreed upon standard for exposing `ElementInternals` so other tooling can build from our convention.
 
-# Goals
+## Goals
 
 - Determine an agreed upon declaration naming convention for exposing `ElementInternals` to third-party tooling.
 - Identify all the places (ARIA roles, custom states, forms, SSR, etc) where consistent interface would be ideal.
+
+## Non Goals
+
+-  Expose internals as a public API, in perpetuity
+- This is a temporary stopgap until browsers expose this information via 
+  the accessibility tree.
+
+## Protocol
 
 In order to retain the _internal_ aspect of `ElementInternals`, it's ideal to not expose it as a public property.
 
