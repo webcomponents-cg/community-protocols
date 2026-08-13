@@ -12,7 +12,7 @@ Check out the [Issues](https://github.com/webcomponents/community-protocols/issu
 
 | Proposal       | Author           | Status     |
 |----------------|------------------|------------|
-| [Context]      | Benjamin Delarre | Candidate  |
+| [Context]      | Benjamin Delarre | Draft      |
 | [Defer Hydration] | Justin Fagnani | Proposal |
 | [Pending Task] | Justin Fagnani   | Draft      |
 | [Slottable Request] | Kevin Schaaf   | Proposal  |
